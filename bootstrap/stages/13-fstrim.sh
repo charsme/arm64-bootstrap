@@ -1,7 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib/logging.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/../lib/logging.sh"
 
 log_info "enabling fstrim timer"
 

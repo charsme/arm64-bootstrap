@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=/dev/null
+# shellcheck source=../bootstrap.env
 source "${SCRIPT_DIR}/../bootstrap.env"
 
 # shellcheck source=/dev/null
@@ -23,6 +23,7 @@ detect_architecture
 
 detect_os
 
+# shellcheck disable=SC2154
 mkdir -p "${BOOTSTRAP_LOG_DIR}"
 
 write_bootstrap_version_file

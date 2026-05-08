@@ -8,6 +8,7 @@ source "${SCRIPT_DIR}/../lib/logging.sh"
 if [[ ! -d /home/ubuntu/.oh-my-zsh ]]; then
   log_info "installing oh-my-zsh"
 
+  # shellcheck disable=SC2312
   sudo -u ubuntu RUNZSH=no CHSH=no \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi

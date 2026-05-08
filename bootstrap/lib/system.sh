@@ -18,6 +18,7 @@ detect_architecture() {
     || fatal "unsupported architecture: ${arch}"
 }
 
+# shellcheck disable=SC2154
 detect_os() {
   require_file "/etc/os-release"
 
@@ -31,10 +32,15 @@ detect_os() {
     || fatal "unsupported ubuntu version: ${VERSION_ID}"
 }
 
+# shellcheck disable=SC2154
 write_bootstrap_version_file() {
+  local bootstrap_date bootstrap_hostname
+  bootstrap_date="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+  bootstrap_hostname="$(hostname)"
+
   cat >/etc/bootstrap-version <<EOF
 BOOTSTRAP_VERSION=${BOOTSTRAP_VERSION}
-BOOTSTRAP_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-HOSTNAME=$(hostname)
+BOOTSTRAP_DATE=${bootstrap_date}
+HOSTNAME=${bootstrap_hostname}
 EOF
 }

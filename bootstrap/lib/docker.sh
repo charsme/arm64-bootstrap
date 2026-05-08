@@ -1,13 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-docker_data_root() {
-  docker info --format '{{ .DockerRootDir }}'
-}
-
+# shellcheck disable=SC2154
 verify_docker_data_root() {
   local root
-  root="$(docker_data_root)"
+  root="$(docker info --format '{{ .DockerRootDir }}')"
 
   [[ "${root}" == "${DATA_DOCKER_ROOT}" ]] \
     || fatal "docker root mismatch: ${root}"

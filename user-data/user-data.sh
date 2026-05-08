@@ -6,6 +6,7 @@ REPO_DIR="/home/ubuntu/arm64-bootstrap"
 REPO_URL="https://github.com/charsme/arm64-bootstrap.git"
 REPO_BRANCH="main"
 
+# shellcheck disable=SC2312
 exec > >(tee -a "${LOG_FILE}" | logger -t user-data -s 2>/dev/console) 2>&1
 
 trap 'echo "[ERROR] user-data failed at line ${LINENO}" >&2' ERR

@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=/dev/null
+# shellcheck source=bootstrap.env
 source "${SCRIPT_DIR}/bootstrap.env"
 
 # shellcheck source=/dev/null
@@ -34,8 +34,12 @@ STAGES=(
   "99-verify.sh"
 )
 
+CURRENT_STAGE=""
+
 run_stage() {
   local stage="$1"
+
+  CURRENT_STAGE="${stage}"
 
   log_info "=================================================="
   log_info "RUNNING STAGE: ${stage}"
@@ -51,6 +55,9 @@ main() {
   acquire_lock
   init_logging
 
+  trap 'log_error "bootstrap failed in stage: ${CURRENT_STAGE:-main}"' ERR
+
+  # shellcheck disable=SC2154
   log_info "bootstrap version: ${BOOTSTRAP_VERSION}"
 
   for stage in "${STAGES[@]}"; do

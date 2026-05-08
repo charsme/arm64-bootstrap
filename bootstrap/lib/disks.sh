@@ -27,6 +27,8 @@ list_candidate_data_devices() {
 
 detect_data_device() {
   local devices
+  # fatal() inside list_candidate_data_devices exits before mapfile on error.
+  # shellcheck disable=SC2312
   mapfile -t devices < <(list_candidate_data_devices)
 
   if [[ "${#devices[@]}" -eq 0 ]]; then
@@ -40,16 +42,10 @@ detect_data_device() {
   echo "${devices[0]}"
 }
 
-device_has_filesystem() {
-  local device="$1"
-
-  blkid "${device}" >/dev/null 2>&1
-}
-
 format_device_if_needed() {
   local device="$1"
 
-  if device_has_filesystem "${device}"; then
+  if blkid "${device}" >/dev/null 2>&1; then
     log_info "filesystem already exists on ${device}"
     return
   fi
@@ -61,31 +57,38 @@ format_device_if_needed() {
 
 get_device_uuid() {
   local device="$1"
+  local uuid
 
-  blkid -s UUID -o value "${device}"
+  uuid="$(blkid -s UUID -o value "${device}")"
+  [[ -n "${uuid}" ]] || fatal "cannot get UUID for device ${device}"
+  echo "${uuid}"
 }
 
+# shellcheck disable=SC2154
 ensure_mountpoint() {
   mkdir -p "${DATA_MOUNT}"
 }
 
+# shellcheck disable=SC2154
 mount_data_device() {
   local device="$1"
   local uuid
 
   uuid="$(get_device_uuid "${device}")"
 
-  grep -q "${uuid}" /etc/fstab \
+  grep -q "UUID=${uuid}" /etc/fstab \
     || echo "UUID=${uuid} ${DATA_MOUNT} ext4 defaults,nofail,x-systemd.device-timeout=30 0 2" >> /etc/fstab
 
   mountpoint -q "${DATA_MOUNT}" \
     || mount "${DATA_MOUNT}"
 }
 
+# shellcheck disable=SC2154
 ensure_data_marker() {
   touch "${DATA_MARKER_FILE}"
 }
 
+# shellcheck disable=SC2154
 verify_data_mount() {
   mountpoint -q "${DATA_MOUNT}" \
     || fatal "/data is not mounted"
