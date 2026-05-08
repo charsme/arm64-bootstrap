@@ -15,8 +15,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 echo "[INFO] user-data launcher starting"
 
-apt-get update
-apt-get install -y \
+apt-get -o DPkg::Lock::Timeout=60 update
+apt-get -o DPkg::Lock::Timeout=60 install -y \
   ca-certificates \
   curl \
   git \

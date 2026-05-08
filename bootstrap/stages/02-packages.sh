@@ -35,6 +35,7 @@ PACKAGES=(
   uidmap
   dbus-user-session
   systemd-timesyncd
+  systemd-zram-generator
   unattended-upgrades
 )
 
