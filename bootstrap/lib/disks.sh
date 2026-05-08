@@ -22,7 +22,8 @@ list_candidate_data_devices() {
 
   lsblk -dpno NAME,TYPE \
     | awk '$2 == "disk" { print $1 }' \
-    | grep -v "^${root_disk}$"
+    | grep -v "^${root_disk}$" \
+    | grep -v "^/dev/zram"
 }
 
 detect_data_device() {
