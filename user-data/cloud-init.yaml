@@ -1,6 +1,13 @@
 #cloud-config
-# Minimal cloud-init wrapper.
-# The real logic is expected to be in user-data/user-data.sh.
-
 package_update: false
 package_upgrade: false
+write_files:
+  - path: /usr/local/bin/bootstrap-launcher.sh
+    permissions: "0755"
+    owner: root:root
+    content: |
+      #!/bin/bash
+      set -Eeuo pipefail
+      bash /home/ubuntu/arm64-bootstrap/user-data/user-data.sh
+runcmd:
+  - [bash, -lc, "/usr/local/bin/bootstrap-launcher.sh"]
