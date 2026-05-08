@@ -1,0 +1,26 @@
+{
+  "data-root": "/data/docker",
+  "live-restore": true,
+  "log-driver": "local",
+  "log-opts": {
+    "max-size": "20m",
+    "max-file": "5"
+  },
+  "features": {
+    "buildkit": true
+  },
+  "registry-mirrors": [
+    "https://public.ecr.aws",
+    "https://mirror.gcr.io"
+  ],
+  "default-address-pools": [
+    {
+      "base": "172.30.0.0/16",
+      "size": 24
+    },
+    {
+      "base": "172.31.0.0/16",
+      "size": 24
+    }
+  ]
+}

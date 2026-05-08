@@ -1,0 +1,10 @@
+/var/log/bootstrap/*.log {
+  daily
+  rotate 7
+  compress
+  delaycompress
+  missingok
+  notifempty
+  copytruncate
+  maxsize 20M
+}

@@ -1,0 +1,7 @@
+[Unit]
+Description=Docker cleanup
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker system prune -f --filter "until=168h"
+ExecStart=/usr/bin/docker builder prune -f --filter "until=168h"

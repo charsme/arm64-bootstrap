@@ -1,0 +1,6 @@
+#cloud-config
+# Minimal cloud-init wrapper.
+# The real logic is expected to be in user-data/user-data.sh.
+
+package_update: false
+package_upgrade: false

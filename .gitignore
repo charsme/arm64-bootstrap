@@ -1,0 +1,25 @@
+# OS
+.DS_Store
+
+# Shell / editor
+*~
+*.swp
+*.swo
+
+# Logs
+*.log
+bootstrap.log
+user-data.log
+
+# Build / runtime artifacts
+tmp/
+.cache/
+
+# Local secrets / env overrides
+.env
+.env.*
+!.env.example
+
+# Optional generated outputs
+generated/
+dist/

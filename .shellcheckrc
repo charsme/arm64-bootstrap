@@ -1,0 +1,4 @@
+# Keep shellcheck strict for infrastructure scripts
+severity=style
+enable=all
+exclude=SC1091

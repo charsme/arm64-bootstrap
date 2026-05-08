@@ -1,0 +1,7 @@
+Unattended-Upgrade::Origins-Pattern {
+  "origin=Ubuntu,codename=${distro_codename},label=Ubuntu-Security";
+};
+
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "18:00";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
