@@ -16,5 +16,6 @@ cp \
   /etc/apt/apt.conf.d/50unattended-upgrades
 
 systemctl enable unattended-upgrades
+systemctl restart unattended-upgrades
 
 log_info "unattended upgrades configured"

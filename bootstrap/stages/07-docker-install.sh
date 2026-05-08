@@ -22,7 +22,8 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 chmod a+r /etc/apt/keyrings/docker.gpg
 
 ARCH="$(dpkg --print-architecture)"
-CODENAME="$(. /etc/os-release && echo "${UBUNTU_CODENAME}")"
+CODENAME="$(. /etc/os-release && echo "${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}")"
+[[ -n "${CODENAME}" ]] || fatal "cannot determine Ubuntu codename from /etc/os-release"
 
 cat >/etc/apt/sources.list.d/docker.list <<EOF
 deb [arch=${ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${CODENAME} stable

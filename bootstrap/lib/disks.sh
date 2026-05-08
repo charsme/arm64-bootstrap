@@ -1,17 +1,28 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-get_root_device() {
-  findmnt -n -o SOURCE /
+get_root_disk() {
+  local src type pkname
+  src="$(findmnt -n -o SOURCE /)"
+  type="$(lsblk -no TYPE "${src}" 2>/dev/null | head -1)"
+
+  if [[ "${type}" == "disk" ]]; then
+    echo "${src}"
+    return
+  fi
+
+  pkname="$(lsblk -no PKNAME "${src}" | head -1)"
+  [[ -n "${pkname}" ]] || fatal "cannot determine root disk from ${src}"
+  echo "/dev/${pkname}"
 }
 
 list_candidate_data_devices() {
-  local root_device
-  root_device="$(get_root_device)"
+  local root_disk
+  root_disk="$(get_root_disk)"
 
   lsblk -dpno NAME,TYPE \
     | awk '$2 == "disk" { print $1 }' \
-    | grep -v "^${root_device}$"
+    | grep -v "^${root_disk}$"
 }
 
 detect_data_device() {

@@ -36,7 +36,6 @@ PACKAGES=(
   dbus-user-session
   systemd-timesyncd
   unattended-upgrades
-  zram-tools
 )
 
 log_info "installing base packages"

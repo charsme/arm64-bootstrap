@@ -1,5 +1,7 @@
 [Unit]
 Description=Docker cleanup
+After=docker.service
+Requires=docker.service
 
 [Service]
 Type=oneshot

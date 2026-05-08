@@ -17,4 +17,8 @@ systemctl restart systemd-zram-setup@zram0.service || true
 
 swapon --show
 
+if ! swapon --show | grep -q zram; then
+  log_warn "zram swap not active; may activate on next daemon-reload or reboot"
+fi
+
 log_info "zram configured"

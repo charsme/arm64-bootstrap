@@ -48,6 +48,7 @@ run_stage() {
 
 main() {
   require_root
+  acquire_lock
   init_logging
 
   log_info "bootstrap version: ${BOOTSTRAP_VERSION}"

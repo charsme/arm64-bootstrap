@@ -19,8 +19,6 @@ log_info "running preflight checks"
 
 require_root
 
-acquire_lock
-
 detect_architecture
 
 detect_os
