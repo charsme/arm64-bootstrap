@@ -13,6 +13,18 @@
     "https://public.ecr.aws",
     "https://mirror.gcr.io"
   ],
+  "default-ulimits": {
+    "nofile": {
+      "Name": "nofile",
+      "Soft": 1048576,
+      "Hard": 1048576
+    },
+    "nproc": {
+      "Name": "nproc",
+      "Soft": 65535,
+      "Hard": 65535
+    }
+  },
   "default-address-pools": [
     {
       "base": "172.30.0.0/16",

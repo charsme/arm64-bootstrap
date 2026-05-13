@@ -5,5 +5,7 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
+StandardOutput=append:/var/log/docker-prune.log
+StandardError=append:/var/log/docker-prune.log
 ExecStart=/usr/bin/docker system prune -f --filter "until=168h"
 ExecStart=/usr/bin/docker builder prune -f --filter "until=168h"
