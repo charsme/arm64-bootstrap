@@ -31,6 +31,7 @@ STAGES=(
   "12-cleanup-timers.sh"
   "13-fstrim.sh"
   "14-motd.sh"
+  "15-logrotate.sh"
   "99-verify.sh"
 )
 
