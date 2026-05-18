@@ -32,6 +32,17 @@ detect_os() {
     || fatal "unsupported ubuntu version: ${VERSION_ID}"
 }
 
+# Total physical memory in bytes, read from /proc/meminfo MemTotal (kB).
+get_mem_total_bytes() {
+  awk '/^MemTotal:/ { printf "%d", $2 * 1024 }' /proc/meminfo
+}
+
+# Size of the filesystem containing the given path, in bytes.
+get_fs_size_bytes() {
+  local path="$1"
+  df -PB1 "${path}" | awk 'NR==2 { print $2 }'
+}
+
 # shellcheck disable=SC2154
 write_bootstrap_version_file() {
   local bootstrap_date bootstrap_hostname
