@@ -23,3 +23,9 @@ tmp/
 # Optional generated outputs
 generated/
 dist/
+
+# Claude Code per-machine settings (not portable)
+.claude/settings.local.json
+
+# loreKeeper namespace pin (per-operator)
+.lorekeeper-ns

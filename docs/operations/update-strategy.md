@@ -1,17 +1,91 @@
 # Update Strategy
 
-## Bootstrap Repository
+Three update surfaces, three different cadences. Each has its own
+mechanism — do not blend them.
 
-The repository may be updated by pulling the latest `main` branch.
+---
 
-## Base Host
+## 1. Bootstrap repository
 
-Use controlled package refreshes during bootstrap.
+The repository defines the host baseline. Update by pulling `main` and
+re-running bootstrap; all stages are idempotent.
 
-## AMI Policy
+```bash
+cd /home/ubuntu/arm64-bootstrap
+git fetch origin
+git log --oneline HEAD..origin/main    # review what is incoming
+git pull --ff-only origin main
+sudo bash bootstrap/bootstrap.sh
+```
+
+Cadence: on demand, driven by repository changes. After a non-trivial
+bootstrap change, bake a new AMI rather than relying on every instance
+re-running the bootstrap on next boot.
+
+For a fleet of hosts: re-bake the AMI from one canary host, validate, then
+roll the new AMI to the rest by relaunching instances (not by SSH-ing into
+each one to `git pull`).
+
+## 2. Base host packages
+
+Two channels:
+
+| Channel | Trigger | Scope |
+|---------|---------|-------|
+| Unattended security updates | systemd timer (stage 11) | security only |
+| Controlled refresh | stage 01 during bootstrap | broader package set |
+
+`apt-get upgrade` is not run from cron outside the unattended-upgrades
+window. Broader upgrades happen only during a bootstrap run, which means
+they happen during AMI bake. This keeps in-place hosts predictable.
+
+Auto-reboot from unattended-upgrades is disabled by default — kernel and
+glibc updates take effect at the next planned reboot or AMI relaunch.
+
+## 3. AMI policy
 
 Prefer regular AMI rebakes over uncontrolled in-place drift.
 
-## Docker
+- Re-bake when: bootstrap changes, Ubuntu point release, Docker minor
+  version bump, kernel CVE that warrants a reboot anyway.
+- Tag every AMI with `bootstrap-version`, `ubuntu-version`, `date`,
+  `arch=arm64`.
+- Keep the last 2–3 AMIs (see `docs/operations/snapshot-strategy.md`).
+- New launches always use the current AMI. Old instances roll forward by
+  relaunch, not by in-place upgrade.
 
-Pin to the stable major line. Avoid edge or nightly channels.
+The AMI bake procedure is in `docs/operations/ami-baking.md`. The bake
+script stops cleanup timers, prunes Docker, and strips the `/data` fstab
+entry so the AMI is portable across data volumes.
+
+## 4. Docker
+
+- Pin to the current stable major version of Docker CE. The repository
+  installs from the official Docker apt repo (stage 07) — no edge or
+  nightly channels.
+- Docker minor and patch upgrades come in via the unattended-upgrades
+  security channel and the controlled refresh in stage 01.
+- Major version bumps are deliberate, gated by a bootstrap change and a
+  fresh AMI bake. They are not silent.
+
+## Cadence summary
+
+| Surface | Cadence | Mechanism |
+|---------|---------|-----------|
+| OS security patches | Continuous | unattended-upgrades timer |
+| OS broader refresh | At AMI bake | stage 01 in bootstrap |
+| Bootstrap repo | On demand | `git pull` + rerun bootstrap |
+| Docker | Stable major, minor via security | Docker apt repo |
+| AMI | Per change or quarterly minimum | bake script |
+| Kernel reboot | Planned, via AMI relaunch | manual |
+
+## Rules
+
+- Do not introduce broad uncontrolled `apt-get upgrade` into cron. It
+  makes provisioning unpredictable and breaks the "rerunnable bootstrap"
+  contract.
+- Do not use Docker's edge or nightly channels in this repo.
+- Do not in-place upgrade Ubuntu major versions on a long-lived host —
+  re-bake the AMI on the new release.
+- Do not skip the verify suite after an update. "It applied cleanly" is
+  not "it works".
