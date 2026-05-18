@@ -17,9 +17,13 @@ modprobe overlay 2>/dev/null || log_warn "overlay not available; will load at Do
 
 log_info "applying sysctl tuning"
 
+# Bootstrap baseline at 50- so operator drop-ins (99-) override intentionally.
 cp \
-  "${SCRIPT_DIR}/../config/sysctl/99-bootstrap.conf" \
-  /etc/sysctl.d/99-bootstrap.conf
+  "${SCRIPT_DIR}/../config/sysctl/50-bootstrap.conf" \
+  /etc/sysctl.d/50-bootstrap.conf
+
+# Remove pre-rename orphan from older bootstrap runs to avoid double-load.
+rm -f /etc/sysctl.d/99-bootstrap.conf
 
 sysctl --system
 
