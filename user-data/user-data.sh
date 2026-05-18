@@ -1,10 +1,19 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-LOG_FILE="/var/log/user-data.log"
-REPO_DIR="/home/ubuntu/arm64-bootstrap"
-REPO_URL="https://github.com/charsme/arm64-bootstrap.git"
-REPO_BRANCH="main"
+# Allow cloud-init (or an operator) to override repo source by writing
+# /etc/default/arm64-bootstrap before this script runs. File is a plain
+# shell snippet: LOG_FILE=... REPO_DIR=... REPO_URL=... REPO_BRANCH=...
+# Missing file is fine; defaults below apply.
+if [[ -f /etc/default/arm64-bootstrap ]]; then
+  # shellcheck source=/dev/null
+  source /etc/default/arm64-bootstrap
+fi
+
+LOG_FILE="${LOG_FILE:-/var/log/user-data.log}"
+REPO_DIR="${REPO_DIR:-/home/ubuntu/arm64-bootstrap}"
+REPO_URL="${REPO_URL:-https://github.com/charsme/arm64-bootstrap.git}"
+REPO_BRANCH="${REPO_BRANCH:-main}"
 
 # shellcheck disable=SC2312
 exec > >(tee -a "${LOG_FILE}" | logger -t user-data -s 2>/dev/console) 2>&1

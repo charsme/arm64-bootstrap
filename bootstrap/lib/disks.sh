@@ -107,28 +107,33 @@ verify_data_mount() {
 }
 
 ensure_data_layout() {
-  mkdir -p \
-    /data/docker \
-    /data/stacks \
-    /data/volumes \
-    /data/workspaces \
-    /data/repos \
-    /data/cache \
-    /data/backups \
-    /data/logs \
+  local base_dirs=(
+    /data/docker
+    /data/stacks
+    /data/volumes
+    /data/workspaces
+    /data/repos
+    /data/cache
+    /data/backups
+    /data/logs
     /data/tmp
+  )
+
+  local extra_dirs=("${DATA_DIRS_EXTRA[@]:-}")
+
+  mkdir -p "${base_dirs[@]}"
+  if (( "${#DATA_DIRS_EXTRA[@]}" > 0 )); then
+    mkdir -p "${extra_dirs[@]}"
+  fi
 
   chown root:root /data/docker
 
-  chown ubuntu:ubuntu \
-    /data/stacks \
-    /data/volumes \
-    /data/workspaces \
-    /data/repos \
-    /data/cache \
-    /data/backups \
-    /data/logs \
-    /data/tmp
+  local d
+  for d in "${base_dirs[@]}" "${extra_dirs[@]}"; do
+    [[ -z "${d}" ]] && continue
+    [[ "${d}" == "/data/docker" ]] && continue
+    chown ubuntu:ubuntu "${d}"
+  done
 }
 
 ensure_home_symlink() {

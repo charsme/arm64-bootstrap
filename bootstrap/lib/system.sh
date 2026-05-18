@@ -28,8 +28,16 @@ detect_os() {
   [[ "${ID}" == "ubuntu" ]] \
     || fatal "unsupported OS: ${ID}"
 
-  [[ "${VERSION_ID}" == "26.04" ]] \
-    || fatal "unsupported ubuntu version: ${VERSION_ID}"
+  local allowed match=0
+  for allowed in "${ALLOWED_UBUNTU_VERSIONS[@]}"; do
+    if [[ "${VERSION_ID}" == "${allowed}" ]]; then
+      match=1
+      break
+    fi
+  done
+
+  (( match == 1 )) \
+    || fatal "unsupported ubuntu version: ${VERSION_ID} (allowed: ${ALLOWED_UBUNTU_VERSIONS[*]})"
 }
 
 # Total physical memory in bytes, read from /proc/meminfo MemTotal (kB).
