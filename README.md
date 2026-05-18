@@ -20,7 +20,7 @@ It does not deploy application stacks.
 
 - Ubuntu 26 LTS
 - AWS Graviton ARM64
-- EC2 `m7g.large`
+- EC2 Graviton family (m7g/r8g/c8g/m8g; validated on m7g.large and r8g.large)
 - Docker Compose
 - single-tenant trusted infrastructure
 

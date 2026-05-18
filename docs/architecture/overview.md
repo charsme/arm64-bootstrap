@@ -9,7 +9,7 @@ The repository prepares the machine only. Application stacks are deployed later.
 ## Target Host
 
 - Ubuntu 26 LTS
-- AWS EC2 `m7g.large`
+- AWS EC2 Graviton family (m7g/r8g/c8g/m8g; validated on m7g.large and r8g.large)
 - ARM64
 - Docker Compose
 - Single-tenant trusted infrastructure

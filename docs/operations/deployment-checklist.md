@@ -6,21 +6,20 @@ Generated from pre-deployment review. Check each section before and after first 
 
 ## Deployment Readiness
 
-Bootstrap is structurally sound for first EC2 deployment on m7g.large ARM64 with a
-single attached data EBS. All critical invariants enforced. Stage boundaries clean.
+Bootstrap is structurally sound for first EC2 deployment on ARM64 Graviton
+(m7g/r8g/c8g/m8g family) with a single attached data EBS. All critical
+invariants enforced. Stage boundaries clean.
 
-**Blocking uncertainty:** Docker CE does not yet publish packages for Ubuntu 26 (codename
-unknown until release, expected April 2026). Bootstrap succeeds through stage 06, fails
-at `apt-get install docker-ce` in stage 07. Once Docker CE ships Ubuntu 26 packages,
-deployment is unblocked. Workaround: temporarily pin `CODENAME=noble` in stage 07 and
-test on Ubuntu 24.04 first.
+Docker CE publishes packages for Ubuntu 26 `resolute` — stage 07 installs
+docker-ce cleanly without codename pinning.
 
 ---
 
 ## EC2 Launch Parameters
 
 ```
-Instance type:        m7g.large (or r8g.large for memory-intensive workloads)
+Instance type:        Graviton ARM64 — m7g.large (general), r8g.large (memory),
+                      c8g.large (compute), or m8g.large (Graviton4 general)
 Architecture:         arm64
 AMI:                  Ubuntu 26.04 LTS arm64 (official Canonical)
 Root volume:          30 GB gp3, encrypted, not shared
@@ -42,14 +41,13 @@ Termination protect:  enabled for production
 
 ## Pre-Launch Checklist
 
-- [ ] Instance type is ARM64 Nitro (m7g.large or compatible)
+- [ ] Instance type is ARM64 Nitro Graviton (m7g/r8g/c8g/m8g family)
 - [ ] Root EBS: 30 GB+ gp3
 - [ ] Data EBS: sized for workload, gp3, **unformatted**, attached as second device
 - [ ] Security Group: SSH port 22 from bastion/operator IP only — no 0.0.0.0/0
 - [ ] IAM role has `AmazonSSMManagedInstanceCore` (out-of-band access if SSH breaks)
 - [ ] Operator SSH public key is in the AMI or injected via cloud-init
 - [ ] Ubuntu 26 Official ARM64 AMI available in target region
-- [ ] Docker CE repo has packages for Ubuntu 26 codename (check download.docker.com)
 - [ ] Repository `https://github.com/charsme/arm64-bootstrap` is public and reachable
 - [ ] Exactly ONE non-root block device attached (more triggers "ambiguous device detection" fatal)
 - [ ] VPC CIDR does not overlap `172.30.0.0/16` or `172.20.0.0/16` (Docker address pools)
@@ -177,9 +175,7 @@ Data EBS is decoupled from AMI — workload data on the EBS is preserved.
 
 | Severity | Risk |
 |----------|------|
-| Blocking | Docker CE may not have Ubuntu 26 packages at launch time |
 | Medium | SSM agent not explicitly installed — if custom AMI lacks it, no out-of-band access if SSH breaks |
-| Medium | Bootstrap log (`/var/log/bootstrap/bootstrap.log`) has no logrotate — grows across reruns |
 | Low | `172.30.0.0/16` Docker pool conflicts with custom VPCs in that range |
 | Low | `Seal=yes` in journald config has no effect without `journalctl --setup-keys` |
 | Low | Docker image cleanup timer prunes images older than 7 days — staged/standby images may be removed |

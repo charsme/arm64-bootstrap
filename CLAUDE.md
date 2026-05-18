@@ -13,7 +13,7 @@ This repository is not for application stack deployment. It prepares the host on
 The host is expected to run on:
 - Ubuntu 26 LTS
 - AWS Graviton ARM64
-- EC2 `m7g.large`
+- EC2 Graviton family (m7g/r8g/c8g/m8g, validated on m7g.large and r8g.large)
 - Docker Compose
 - trusted single-tenant infrastructure
 - a persistent `/data` EBS volume for operational state
