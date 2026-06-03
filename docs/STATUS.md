@@ -3,7 +3,7 @@
 > Single source of truth for "what's open / left on this project." Answer from this
 > file directly; do not re-derive from scattered trackers. Keep current on any status change.
 >
-> Last updated: 2026-06-03 (Tier 3 done: motd lists node, NODE_MAJOR bump policy in update-strategy).
+> Last updated: 2026-06-03 (Tier 2 done: aws.sh IMDSv2 helpers, stage-15 contract, shellcheck CI gate).
 
 ## Status
 
@@ -18,6 +18,8 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
 | zram / sysctl / journald / logrotate caps | ✅ implemented (env-driven sizing) |
 | SSH hardening + unattended upgrades | ✅ implemented |
 | Node.js LTS (stage 16) | ✅ added 2026-06-03 |
+| CI: strict shellcheck gate | ✅ `.github/workflows/shellcheck.yml`, tree clean |
+| AWS CLI v2 | ⏳ wanted next (Tier 2) |
 | First real EC2 launch + AMI bake | ⏳ not yet done |
 
 ## Open / left (tiered)
@@ -26,12 +28,13 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
 - None.
 
 ### Tier 2 — Open decisions / hygiene
-- **`bootstrap/lib/aws.sh` is an empty placeholder**, sourced nowhere. Decide: fill with
-  intended AWS helpers (IMDS/tags/EBS detection) or delete the dead stub.
-- **`docs/implementation/stage-contracts.md` skips stage 15 (logrotate)** — doc lists
-  00–14, 16, 99. Code exists; add the missing contract section.
-- **No CI gate.** Strict `.shellcheckrc` (`enable=all`) implies intent to enforce, but
-  shellcheck only runs manually. Consider a GitHub Action running shellcheck on stages/lib.
+- **AWS CLI v2 package** — wanted next. Not in Ubuntu apt for arm64; needs the official
+  AWS bundle install (own stage, mirroring docker/node keyring-style stages). To design.
+- ~~`lib/aws.sh` dead placeholder~~ — DONE: filled with IMDSv2 token/metadata helpers.
+- ~~stage-15 (logrotate) missing from stage-contracts~~ — DONE.
+- ~~No CI gate~~ — DONE: `.github/workflows/shellcheck.yml` (strict). Fixed the SC2154
+  false-positives via `external-sources`/`source-path=SCRIPTDIR` + per-stage `source=`
+  directives, and a pre-existing SC2310 in stage 15. Tree is shellcheck-clean.
 
 ### Tier 3 — Backlog (pick-up basis)
 - None open. (B1 motd node entry, B2 NODE_MAJOR bump checklist — both done 2026-06-03.)

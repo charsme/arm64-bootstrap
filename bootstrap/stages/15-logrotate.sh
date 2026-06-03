@@ -30,9 +30,8 @@ for f in "${LOGROTATE_FILES[@]}"; do
   cp "${LOGROTATE_CONF_DIR}/${f}" "/etc/logrotate.d/${f}"
 done
 
-logrotate --debug /etc/logrotate.conf 2>&1 | grep -E "^error" && {
-  log_error "logrotate config validation failed"
-  exit 1
-} || true
+if logrotate --debug /etc/logrotate.conf 2>&1 | grep -qE "^error"; then
+  fatal "logrotate config validation failed"
+fi
 
 log_info "logrotate configured"

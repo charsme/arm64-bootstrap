@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=/dev/null
+# shellcheck source=../bootstrap.env
 source "${SCRIPT_DIR}/../bootstrap.env"
 
 # shellcheck source=/dev/null

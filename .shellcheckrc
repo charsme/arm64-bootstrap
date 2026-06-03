@@ -2,3 +2,8 @@
 severity=style
 enable=all
 disable=SC1091
+
+# Follow sourced files so vars defined in bootstrap.env are seen (kills
+# false-positive SC2154). Resolve `source=` paths relative to each script.
+external-sources=true
+source-path=SCRIPTDIR

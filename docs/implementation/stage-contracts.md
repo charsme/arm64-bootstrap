@@ -190,6 +190,17 @@ Must not:
 - create noisy login banners
 - create brittle shell logic
 
+## Stage 15: Logrotate
+
+Responsibilities:
+- install the global `logrotate.conf` and bootstrap-owned `logrotate.d` drop-ins
+- keep host log growth bounded under the logging rules
+- validate the resulting config (`logrotate --debug`) and fail hard on errors
+
+Must not:
+- use global wildcard rules for container runtime logs
+- silently ignore a failed config validation
+
 ## Stage 16: Node.js
 
 Responsibilities:
