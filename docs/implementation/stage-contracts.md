@@ -40,7 +40,7 @@ Must not:
 
 Responsibilities:
 - install base utilities
-- install `git`, `curl`, `vim`, `zsh`, `tree`, `sudo`, `node` prerequisites, and other agreed operational tools
+- install `git`, `curl`, `vim`, `zsh`, `tree`, `sudo`, and other agreed operational tools (Node.js is installed separately in stage 16)
 - install Docker prerequisites
 
 Must not:
@@ -189,6 +189,16 @@ Responsibilities:
 Must not:
 - create noisy login banners
 - create brittle shell logic
+
+## Stage 16: Node.js
+
+Responsibilities:
+- install Node.js LTS (pinned major via `NODE_MAJOR`) from the official NodeSource apt repository
+- use a keyring + `signed-by` apt source, mirroring the Docker install pattern
+
+Must not:
+- use floating channels that break reproducibility
+- install global npm application packages
 
 ## Stage 99: Verification
 

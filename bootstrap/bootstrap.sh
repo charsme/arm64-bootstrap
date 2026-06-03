@@ -32,6 +32,7 @@ STAGES=(
   "13-fstrim.sh"
   "14-motd.sh"
   "15-logrotate.sh"
+  "16-node.sh"
   "99-verify.sh"
 )
 
