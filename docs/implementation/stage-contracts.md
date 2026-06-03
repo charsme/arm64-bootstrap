@@ -211,6 +211,17 @@ Must not:
 - use floating channels that break reproducibility
 - install global npm application packages
 
+## Stage 17: AWS CLI
+
+Responsibilities:
+- install AWS CLI v2 (pinned via `AWSCLI_VERSION`) from the official zip bundle,
+  since it is not packaged in the Ubuntu arm64 apt repo
+- install idempotently (`aws/install --update`) and clean up the download
+
+Must not:
+- install on a non-arm64 host (wrong bundle)
+- pull an unpinned/latest bundle that breaks AMI reproducibility
+
 ## Stage 99: Verification
 
 Responsibilities:

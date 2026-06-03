@@ -3,23 +3,23 @@
 > Single source of truth for "what's open / left on this project." Answer from this
 > file directly; do not re-derive from scattered trackers. Keep current on any status change.
 >
-> Last updated: 2026-06-03 (Tier 2 done: aws.sh IMDSv2 helpers, stage-15 contract, shellcheck CI gate).
+> Last updated: 2026-06-03 (AWS CLI v2 stage 17 added; all tracked Tier 1–3 items closed).
 
 ## Status
 
-Host bootstrap is feature-complete and pushed to `main`. All 18 stages wired and
+Host bootstrap is feature-complete and pushed to `main`. All 19 stages wired and
 idempotent; verify suite in place. Not yet exercised on a real first EC2 launch / AMI bake.
 
 | Area | State |
 |------|-------|
-| Stage pipeline (00–16, 99) | ✅ complete, registered in `bootstrap.sh` |
+| Stage pipeline (00–17, 99) | ✅ complete, registered in `bootstrap.sh` |
 | Verify suite (bootstrap/storage/docker/network/security) | ✅ in place |
 | Docker on `/data`, mount-gated | ✅ implemented |
 | zram / sysctl / journald / logrotate caps | ✅ implemented (env-driven sizing) |
 | SSH hardening + unattended upgrades | ✅ implemented |
 | Node.js LTS (stage 16) | ✅ added 2026-06-03 |
 | CI: strict shellcheck gate | ✅ `.github/workflows/shellcheck.yml`, tree clean |
-| AWS CLI v2 | ⏳ wanted next (Tier 2) |
+| AWS CLI v2 (stage 17) | ✅ added 2026-06-03, pinned `AWSCLI_VERSION` |
 | First real EC2 launch + AMI bake | ⏳ not yet done |
 
 ## Open / left (tiered)
@@ -28,8 +28,8 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
 - None.
 
 ### Tier 2 — Open decisions / hygiene
-- **AWS CLI v2 package** — wanted next. Not in Ubuntu apt for arm64; needs the official
-  AWS bundle install (own stage, mirroring docker/node keyring-style stages). To design.
+- None open.
+- ~~AWS CLI v2~~ — DONE: stage 17 installs pinned `AWSCLI_VERSION` from official zip.
 - ~~`lib/aws.sh` dead placeholder~~ — DONE: filled with IMDSv2 token/metadata helpers.
 - ~~stage-15 (logrotate) missing from stage-contracts~~ — DONE.
 - ~~No CI gate~~ — DONE: `.github/workflows/shellcheck.yml` (strict). Fixed the SC2154
@@ -44,7 +44,7 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
 - Application/service layer — explicitly out of scope for this repo (host prep only).
 
 ## Git / deploy state
-- Branch `main`, in sync with `origin/main` (`8cf942d`).
+- Branch `main`, in sync with `origin/main` (HEAD; CI shellcheck green).
 - Not yet deployed to a live first-launch instance; no AMI baked from current `main`.
 
 ## Detailed sources (drill-down only)

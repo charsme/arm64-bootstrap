@@ -81,6 +81,19 @@ entry so the AMI is portable across data volumes.
   2. Update `NODE_MAJOR` in `bootstrap.env`; rerun stage 16 (idempotent).
   3. Bake a fresh AMI and roll forward by relaunch — not silent in-place.
 
+## 6. AWS CLI
+
+- Pin to an exact AWS CLI v2 version via `AWSCLI_VERSION` in
+  `bootstrap/bootstrap.env` (stage 17, official zip bundle — not in the
+  Ubuntu arm64 apt repo, so it is not covered by unattended-upgrades).
+- Because apt does not patch it, AWS CLI moves only when `AWSCLI_VERSION`
+  is bumped. Checklist before bumping:
+  1. Confirm the target version publishes an `aarch64` bundle
+     (`awscli-exe-linux-aarch64-<version>.zip`).
+  2. Update `AWSCLI_VERSION`; rerun stage 17 (`aws/install --update` is
+     idempotent — installs or updates in place).
+  3. Bake a fresh AMI and roll forward by relaunch.
+
 ## Cadence summary
 
 | Surface | Cadence | Mechanism |
@@ -90,6 +103,7 @@ entry so the AMI is portable across data volumes.
 | Bootstrap repo | On demand | `git pull` + rerun bootstrap |
 | Docker | Stable major, minor via security | Docker apt repo |
 | Node.js | LTS major (`NODE_MAJOR`), minor via security | NodeSource apt repo |
+| AWS CLI | Pinned exact (`AWSCLI_VERSION`), bump deliberate | Official zip bundle |
 | AMI | Per change or quarterly minimum | bake script |
 | Kernel reboot | Planned, via AMI relaunch | manual |
 
