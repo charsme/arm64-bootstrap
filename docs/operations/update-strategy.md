@@ -86,13 +86,20 @@ entry so the AMI is portable across data volumes.
 - Pin to an exact AWS CLI v2 version via `AWSCLI_VERSION` in
   `bootstrap/bootstrap.env` (stage 17, official zip bundle — not in the
   Ubuntu arm64 apt repo, so it is not covered by unattended-upgrades).
+- The bundle is GPG-verified before install against AWS's published signing
+  key, committed at `bootstrap/config/awscli/aws-cli-public-key.asc`.
 - Because apt does not patch it, AWS CLI moves only when `AWSCLI_VERSION`
   is bumped. Checklist before bumping:
   1. Confirm the target version publishes an `aarch64` bundle
-     (`awscli-exe-linux-aarch64-<version>.zip`).
+     (`awscli-exe-linux-aarch64-<version>.zip`) and its `.sig`.
   2. Update `AWSCLI_VERSION`; rerun stage 17 (`aws/install --update` is
      idempotent — installs or updates in place).
   3. Bake a fresh AMI and roll forward by relaunch.
+- Signing key rotation: the committed key (fingerprint
+  `FB5D B77F D5C1 18B8 0511 ADA8 A631 0ACC 4672 475C`) has an expiry
+  (currently 2026-07-07). When AWS rotates it, refresh the committed `.asc`
+  from the official install docs and re-verify before committing — otherwise
+  stage 17 will start failing verification on new bundles.
 
 ## Cadence summary
 

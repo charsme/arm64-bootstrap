@@ -3,7 +3,7 @@
 > Single source of truth for "what's open / left on this project." Answer from this
 > file directly; do not re-derive from scattered trackers. Keep current on any status change.
 >
-> Last updated: 2026-06-03 (AWS CLI v2 stage 17 added; all tracked Tier 1–3 items closed).
+> Last updated: 2026-06-03 (AWS CLI stage 17 now GPG-verifies the bundle; key-rotation watch added).
 
 ## Status
 
@@ -19,13 +19,17 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
 | SSH hardening + unattended upgrades | ✅ implemented |
 | Node.js LTS (stage 16) | ✅ added 2026-06-03 |
 | CI: strict shellcheck gate | ✅ `.github/workflows/shellcheck.yml`, tree clean |
-| AWS CLI v2 (stage 17) | ✅ added 2026-06-03, pinned `AWSCLI_VERSION` |
+| AWS CLI v2 (stage 17) | ✅ pinned `AWSCLI_VERSION`, GPG-verified bundle |
 | First real EC2 launch + AMI bake | ⏳ not yet done |
 
 ## Open / left (tiered)
 
 ### Tier 1 — Dated / imminent
-- None.
+- **AWS CLI signing key expires 2026-07-07.** Committed key
+  `config/awscli/aws-cli-public-key.asc` (fp `…4672 475C`). When AWS rotates, refresh
+  the `.asc` from official docs or stage 17 verification fails on new bundles. Current
+  block already ships the rotation-overlap key, so this is a refresh-and-revalidate task,
+  not an outage.
 
 ### Tier 2 — Open decisions / hygiene
 - None open.
