@@ -68,6 +68,19 @@ entry so the AMI is portable across data volumes.
 - Major version bumps are deliberate, gated by a bootstrap change and a
   fresh AMI bake. They are not silent.
 
+## 5. Node.js
+
+- Pin to a Node.js LTS major via `NODE_MAJOR` in `bootstrap/bootstrap.env`
+  (stage 16, installed from the official NodeSource apt repo). Default is
+  the current active LTS line — no `current`/odd or floating `lts` channel.
+- Minor and patch upgrades come in via the unattended-upgrades security
+  channel and the controlled refresh in stage 01, same as Docker.
+- Major bumps are deliberate. Checklist before bumping `NODE_MAJOR`:
+  1. Confirm the target major is an LTS line still in active/maintenance
+     support, and that NodeSource publishes it for `arm64`.
+  2. Update `NODE_MAJOR` in `bootstrap.env`; rerun stage 16 (idempotent).
+  3. Bake a fresh AMI and roll forward by relaunch — not silent in-place.
+
 ## Cadence summary
 
 | Surface | Cadence | Mechanism |
@@ -76,6 +89,7 @@ entry so the AMI is portable across data volumes.
 | OS broader refresh | At AMI bake | stage 01 in bootstrap |
 | Bootstrap repo | On demand | `git pull` + rerun bootstrap |
 | Docker | Stable major, minor via security | Docker apt repo |
+| Node.js | LTS major (`NODE_MAJOR`), minor via security | NodeSource apt repo |
 | AMI | Per change or quarterly minimum | bake script |
 | Kernel reboot | Planned, via AMI relaunch | manual |
 

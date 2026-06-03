@@ -3,7 +3,7 @@
 > Single source of truth for "what's open / left on this project." Answer from this
 > file directly; do not re-derive from scattered trackers. Keep current on any status change.
 >
-> Last updated: 2026-06-03 (added Node.js stage 16 + docker gpg idempotency fix; bootstrapped this file).
+> Last updated: 2026-06-03 (Tier 3 done: motd lists node, NODE_MAJOR bump policy in update-strategy).
 
 ## Status
 
@@ -34,10 +34,7 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
   shellcheck only runs manually. Consider a GitHub Action running shellcheck on stages/lib.
 
 ### Tier 3 — Backlog (pick-up basis)
-| id | item | effort | note |
-|----|------|--------|------|
-| B1 | MOTD show node version | XS | if stage 14 already surfaces docker version, mirror for node |
-| B2 | Pin Node minor or verify NodeSource arm64 availability per bump | XS | `NODE_MAJOR` bump checklist |
+- None open. (B1 motd node entry, B2 NODE_MAJOR bump checklist — both done 2026-06-03.)
 
 ### Tier 4 — Watches / deferred (dormant)
 - AWS helper layer (`lib/aws.sh`) — only build if a stage actually needs IMDS/tag/EBS logic.

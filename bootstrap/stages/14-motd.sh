@@ -9,6 +9,7 @@ Docker runtime stored under /data/docker
 
 Use:
   docker compose
+  node
   systemctl
   journalctl
 
