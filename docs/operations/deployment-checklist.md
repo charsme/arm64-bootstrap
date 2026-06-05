@@ -171,6 +171,34 @@ Data EBS is decoupled from AMI — workload data on the EBS is preserved.
 
 ---
 
+## CloudWatch Agent / Compute Optimizer Prerequisites (Stage 18)
+
+Stage 18 installs and configures the CloudWatch agent but starts it only when an IAM
+role is attached — a boot-time systemd `ExecCondition` gate re-checks on every boot.
+The following account- and instance-level steps are required for memory metrics to
+reach Compute Optimizer; the host cannot perform them on its own.
+
+- [ ] Attach an instance profile whose role includes the AWS managed policy
+  `CloudWatchAgentServerPolicy` (grants `cloudwatch:PutMetricData` and related
+  permissions required by the agent).
+- [ ] If the role was attached **after** first boot, reboot the instance — the
+  `ExecCondition` gate runs at boot time and will start the agent on the next boot
+  once a role is present.
+- [ ] Enable AWS Compute Optimizer for the account and region (one-time opt-in):
+  AWS Console → Compute Optimizer → Get Started, **or**
+  `aws compute-optimizer update-enrollment-status --status Active`.
+- [ ] Allow the observation window: Compute Optimizer requires several days of
+  `mem_used_percent` data before emitting a memory rightsizing recommendation.
+
+**Known limitation:** the gate detects role *presence* only — it does not verify
+that the attached role grants `cloudwatch:PutMetricData`. A present-but-under-permissioned
+role lets the agent start while `PutMetricData` returns 403. The login motd will still
+report the agent as "running". Check
+`/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log` for permission
+errors if Compute Optimizer shows no memory data after the observation window.
+
+---
+
 ## Known Risks (Residual)
 
 | Severity | Risk |
@@ -179,3 +207,4 @@ Data EBS is decoupled from AMI — workload data on the EBS is preserved.
 | Low | `172.30.0.0/16` Docker pool conflicts with custom VPCs in that range |
 | Low | `Seal=yes` in journald config has no effect without `journalctl --setup-keys` |
 | Low | Docker image cleanup timer prunes images older than 7 days — staged/standby images may be removed |
+| Low | CloudWatch agent IAM gate detects role presence only — a present-but-under-permissioned role starts the agent while `PutMetricData` returns 403 (silent from motd) |
