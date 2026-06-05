@@ -101,6 +101,29 @@ entry so the AMI is portable across data volumes.
   from the official install docs and re-verify before committing — otherwise
   stage 17 will start failing verification on new bundles.
 
+## 7. CloudWatch agent
+
+- Pin to an exact agent version via `CWAGENT_VERSION` in
+  `bootstrap/bootstrap.env` (stage 18, official S3 `.deb` bundle — not in the
+  Ubuntu arm64 apt repo, so it is not covered by unattended-upgrades).
+- The `.deb` is GPG-verified before install against AWS's published signing
+  key, committed at `bootstrap/config/cloudwatch/amazon-cloudwatch-agent.gpg`.
+- Because apt does not patch it, the agent moves only when `CWAGENT_VERSION`
+  is bumped. Checklist before bumping:
+  1. Confirm the target version publishes an `arm64` bundle and its `.sig` at
+     `https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/arm64/<version>/amazon-cloudwatch-agent.deb`.
+     The current published version is at
+     `https://amazoncloudwatch-agent.s3.amazonaws.com/info/latest/CWAGENT_VERSION`.
+  2. Update `CWAGENT_VERSION`; rerun stage 18 (`dpkg -i` of the pinned version
+     plus the idempotent `install`/`enable` steps reconcile in place).
+  3. Bake a fresh AMI and roll forward by relaunch.
+- Signing key rotation: the committed key (fingerprint
+  `9376 16F3 450B 7D80 6CBD 9725 D581 6730 3B78 9C72`, uid "Amazon CloudWatch
+  Agent") has no listed expiry. If AWS rotates it, refresh the committed
+  `.gpg` from `https://amazoncloudwatch-agent.s3.amazonaws.com/assets/amazon-cloudwatch-agent.gpg`
+  and re-verify the fingerprint before committing — otherwise stage 18 will
+  start failing verification on new bundles.
+
 ## Cadence summary
 
 | Surface | Cadence | Mechanism |
@@ -111,6 +134,7 @@ entry so the AMI is portable across data volumes.
 | Docker | Stable major, minor via security | Docker apt repo |
 | Node.js | LTS major (`NODE_MAJOR`), minor via security | NodeSource apt repo |
 | AWS CLI | Pinned exact (`AWSCLI_VERSION`), bump deliberate | Official zip bundle |
+| CloudWatch agent | Pinned exact (`CWAGENT_VERSION`), bump deliberate | Official S3 `.deb` bundle |
 | AMI | Per change or quarterly minimum | bake script |
 | Kernel reboot | Planned, via AMI relaunch | manual |
 
