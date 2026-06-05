@@ -34,6 +34,7 @@ STAGES=(
   "15-logrotate.sh"
   "16-node.sh"
   "17-awscli.sh"
+  "18-cloudwatch.sh"
   "99-verify.sh"
 )
 

@@ -11,6 +11,7 @@ VERIFY_SCRIPTS=(
   verify-docker.sh
   verify-network.sh
   verify-security.sh
+  verify-cloudwatch.sh
 )
 
 log_info "running verification suite"
