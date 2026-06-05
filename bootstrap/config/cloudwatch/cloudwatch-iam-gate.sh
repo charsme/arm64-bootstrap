@@ -14,8 +14,10 @@ set -Eeuo pipefail
 
 IMDS_BASE="${IMDS_BASE:-http://169.254.169.254/latest}"
 
+# NOTE: imds_token is intentionally duplicated from bootstrap/lib/aws.sh —
+# this script is installed standalone and cannot source repo libs at boot.
 imds_token() {
-  curl -fsS -X PUT "${IMDS_BASE}/api/token" \
+  curl -fsS --connect-timeout 2 --max-time 5 -X PUT "${IMDS_BASE}/api/token" \
     -H "X-aws-ec2-metadata-token-ttl-seconds: 60"
 }
 
@@ -23,7 +25,7 @@ has_iam_role() {
   local token role
   # shellcheck disable=SC2310 # imds_token used in || fallback inside a function; set -e disabled here intentionally
   token="$(imds_token)" || return 1
-  role="$(curl -fsS -H "X-aws-ec2-metadata-token: ${token}" \
+  role="$(curl -fsS --connect-timeout 2 --max-time 5 -H "X-aws-ec2-metadata-token: ${token}" \
     "${IMDS_BASE}/meta-data/iam/security-credentials/")" || return 1
   [[ -n "${role}" ]]
 }
