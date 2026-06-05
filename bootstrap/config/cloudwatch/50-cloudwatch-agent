@@ -1,0 +1,13 @@
+#!/bin/bash
+# Rendered at each login by pam_motd. Reports live CloudWatch agent state and,
+# when idle, the most likely cause + fix. Runs as root, so systemctl works.
+
+if systemctl is-active --quiet amazon-cloudwatch-agent.service; then
+  printf '\nCloudWatch agent: running (mem/swap/disk -> CWAgent namespace)\n'
+else
+  printf '\nCloudWatch agent: NOT running.\n'
+  printf '  Memory metrics are NOT reaching CloudWatch / Compute Optimizer.\n'
+  printf '  Most likely cause: no IAM role attached to this instance.\n'
+  printf '  Fix: attach an instance profile with the CloudWatchAgentServerPolicy\n'
+  printf '       managed policy, then reboot. The gate re-checks on every boot.\n'
+fi
