@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This repository provisions a base EC2 host for ARM64 Ubuntu 26 on AWS Graviton. The output is a clean, repeatable host foundation for AI orchestration workloads.
+This repository provisions a base EC2 host for ARM64 Ubuntu 24.04/26.04 on AWS Graviton. The output is a clean, repeatable host foundation for AI orchestration workloads.
 
 The repository prepares the machine only. Application stacks are deployed later.
 
 ## Target Host
 
-- Ubuntu 26 LTS
+- Ubuntu 24.04 LTS (noble) or 26.04 LTS (resolute)
 - AWS EC2 Graviton family: sustained m8g/r8g/c8g/m7g (Graviton3/4) and burstable
   t4g (Graviton2), sizes medium–xlarge (≥2 GiB RAM). Validated on m7g.large and
   r8g.large; other sizes/families are aarch64-gated, permitted, not yet hardware-validated

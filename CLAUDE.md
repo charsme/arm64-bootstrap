@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-This repository provisions a reproducible ARM64 Ubuntu 26 EC2 base host for long-lived AI orchestration workloads on AWS.
+This repository provisions a reproducible ARM64 Ubuntu 24.04/26.04 EC2 base host for long-lived AI orchestration workloads on AWS.
 
 The target outcome is a clean, safe, rerunnable bootstrap that prepares an instance for later AMI baking and later service-layer deployment.
 
@@ -11,7 +11,7 @@ This repository is not for application stack deployment. It prepares the host on
 ## Core Design Intent
 
 The host is expected to run on:
-- Ubuntu 26 LTS
+- Ubuntu 24.04 LTS (noble) or 26.04 LTS (resolute)
 - AWS Graviton ARM64
 - EC2 Graviton family: sustained m8g/r8g/c8g/m7g (Graviton3/4) and burstable t4g
   (Graviton2); sizes medium–xlarge, ≥2 GiB RAM. Validated on m7g.large and

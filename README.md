@@ -1,6 +1,6 @@
 # arm64-bootstrap
 
-Bootstrap repository for a reproducible Ubuntu 26 ARM64 EC2 base host.
+Bootstrap repository for a reproducible Ubuntu 24.04/26.04 ARM64 EC2 base host.
 
 ## Purpose
 
@@ -18,7 +18,7 @@ It does not deploy application stacks.
 
 ## Target
 
-- Ubuntu 26 LTS
+- Ubuntu 24.04 LTS (noble) or 26.04 LTS (resolute)
 - AWS Graviton ARM64
 - EC2 Graviton family (m7g/r8g/c8g/m8g; validated on m7g.large and r8g.large)
 - Docker Compose
