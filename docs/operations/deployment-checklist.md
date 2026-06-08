@@ -11,8 +11,10 @@ sustained m8g/r8g/c8g/m7g (Graviton3/4) or burstable t4g (Graviton2), sizes
 medium–xlarge — with a single attached data EBS. All critical
 invariants enforced. Stage boundaries clean.
 
-Docker CE publishes packages for Ubuntu 26 `resolute` — stage 07 installs
-docker-ce cleanly without codename pinning.
+Stage 07 derives the apt codename from `/etc/os-release` at runtime, so Docker CE
+installs cleanly on any release Docker publishes for — `noble` (24.04) and
+`resolute` (26.04) are both available. (The repo line is codename-pinned to the
+detected codename, not unpinned.)
 
 ---
 
@@ -23,7 +25,9 @@ Instance type:        Graviton ARM64. Sustained: m8g (G4 general), r8g (memory),
                       c8g (compute), m7g (G3 general). Burstable: t4g (G2).
                       Sizes medium–xlarge; ≥2 GiB RAM (see Instance Sizing Notes).
 Architecture:         arm64
-AMI:                  Ubuntu 26.04 LTS arm64 (official Canonical)
+AMI:                  Ubuntu 24.04 LTS (noble) or 26.04 LTS (resolute) arm64,
+                      official Canonical. Pick 24.04 where 26.04 tooling support
+                      is incomplete (e.g. GitLab).
 Root volume:          30 GB gp3, encrypted, not shared
 Data volume:          <workload-sized> gp3, encrypted, /dev/sdf (appears as nvme1n1),
                       NO snapshot, NO existing filesystem
@@ -43,7 +47,8 @@ Termination protect:  enabled for production
 
 ## Instance Sizing Notes
 
-Bootstrap enforces only the `aarch64` architecture gate (plus Ubuntu 26.04) — no
+Bootstrap enforces only the `aarch64` architecture gate (plus Ubuntu 24.04 or
+26.04 via `ALLOWED_UBUNTU_VERSIONS`) — no
 instance-type or family check. Any Graviton size runs. RAM/FS-dependent tuning
 (zram, `vm.dirty_bytes`, journald `SystemMaxUse`) auto-derives from live system
 state on every run, so it tracks the chosen size with no manual change. See
@@ -78,7 +83,7 @@ hardware-validated** — first run on a new size should be watched.
 - [ ] Security Group: SSH port 22 from bastion/operator IP only — no 0.0.0.0/0
 - [ ] IAM role has `AmazonSSMManagedInstanceCore` (out-of-band access if SSH breaks)
 - [ ] Operator SSH public key is in the AMI or injected via cloud-init
-- [ ] Ubuntu 26 Official ARM64 AMI available in target region
+- [ ] Official Canonical Ubuntu ARM64 AMI (24.04 noble or 26.04 resolute) available in target region
 - [ ] Repository `https://github.com/charsme/arm64-bootstrap` is public and reachable
 - [ ] Exactly ONE non-root block device attached (more triggers "ambiguous device detection" fatal)
 - [ ] VPC CIDR does not overlap `172.30.0.0/16` or `172.20.0.0/16` (Docker address pools)
