@@ -3,7 +3,7 @@
 > Single source of truth for "what's open / left on this project." Answer from this
 > file directly; do not re-derive from scattered trackers. Keep current on any status change.
 >
-> Last updated: 2026-06-08 (bake-ami.sh now runs verify-cloudwatch; AWS CLI key file deduped to single block; key still not rotated by AWS as of today).
+> Last updated: 2026-06-08 (instance-class scope widened: docs bless sustained m8g/r8g/c8g/m7g + burstable t4g, sizes medium–xlarge; stage 00 low-RAM WARN <4 GiB added; bake-ami.sh runs verify-cloudwatch; AWS CLI key deduped).
 
 ## Status
 

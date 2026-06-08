@@ -45,6 +45,22 @@ get_mem_total_bytes() {
   awk '/^MemTotal:/ { printf "%d", $2 * 1024 }' /proc/meminfo
 }
 
+# Advisory (non-fatal) low-memory check. Bootstrap runs on any aarch64 host;
+# small burstable instances (e.g. t4g.small at 2 GiB) are valid but tight: the
+# baseline services this host installs — Docker daemon, CloudWatch agent, Node,
+# zsh — consume a meaningful fraction of RAM before any workload. 4 GiB is the
+# comfortable floor. Below it we warn, never abort: undersizing is an operator
+# choice, not a correctness error.
+MIN_RECOMMENDED_MEM_BYTES=$(( 4 * 1024 * 1024 * 1024 ))
+
+warn_if_low_memory() {
+  local mem_bytes
+  mem_bytes="$(get_mem_total_bytes)"
+  if (( mem_bytes < MIN_RECOMMENDED_MEM_BYTES )); then
+    log_warn "physical RAM $(( mem_bytes / 1024 / 1024 )) MiB below 4 GiB recommended floor; baseline services (Docker, CloudWatch agent, Node) leave limited headroom for workloads"
+  fi
+}
+
 # Size of the filesystem containing the given path, in bytes.
 get_fs_size_bytes() {
   local path="$1"

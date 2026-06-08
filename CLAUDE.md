@@ -13,7 +13,11 @@ This repository is not for application stack deployment. It prepares the host on
 The host is expected to run on:
 - Ubuntu 26 LTS
 - AWS Graviton ARM64
-- EC2 Graviton family (m7g/r8g/c8g/m8g, validated on m7g.large and r8g.large)
+- EC2 Graviton family: sustained m8g/r8g/c8g/m7g (Graviton3/4) and burstable t4g
+  (Graviton2); sizes medium–xlarge, ≥2 GiB RAM. Validated on m7g.large and
+  r8g.large; other sizes/families are aarch64-gated and permitted but not yet
+  hardware-validated. Burstable t4g caveat: zram zstd compression under memory
+  pressure consumes CPU credits — watch credit balance on sustained-swap workloads.
 - Docker Compose
 - trusted single-tenant infrastructure
 - a persistent `/data` EBS volume for operational state

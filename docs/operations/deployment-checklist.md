@@ -6,8 +6,9 @@ Generated from pre-deployment review. Check each section before and after first 
 
 ## Deployment Readiness
 
-Bootstrap is structurally sound for first EC2 deployment on ARM64 Graviton
-(m7g/r8g/c8g/m8g family) with a single attached data EBS. All critical
+Bootstrap is structurally sound for first EC2 deployment on ARM64 Graviton —
+sustained m8g/r8g/c8g/m7g (Graviton3/4) or burstable t4g (Graviton2), sizes
+medium–xlarge — with a single attached data EBS. All critical
 invariants enforced. Stage boundaries clean.
 
 Docker CE publishes packages for Ubuntu 26 `resolute` — stage 07 installs
@@ -18,8 +19,9 @@ docker-ce cleanly without codename pinning.
 ## EC2 Launch Parameters
 
 ```
-Instance type:        Graviton ARM64 — m7g.large (general), r8g.large (memory),
-                      c8g.large (compute), or m8g.large (Graviton4 general)
+Instance type:        Graviton ARM64. Sustained: m8g (G4 general), r8g (memory),
+                      c8g (compute), m7g (G3 general). Burstable: t4g (G2).
+                      Sizes medium–xlarge; ≥2 GiB RAM (see Instance Sizing Notes).
 Architecture:         arm64
 AMI:                  Ubuntu 26.04 LTS arm64 (official Canonical)
 Root volume:          30 GB gp3, encrypted, not shared
@@ -39,9 +41,38 @@ Termination protect:  enabled for production
 
 ---
 
+## Instance Sizing Notes
+
+Bootstrap enforces only the `aarch64` architecture gate (plus Ubuntu 26.04) — no
+instance-type or family check. Any Graviton size runs. RAM/FS-dependent tuning
+(zram, `vm.dirty_bytes`, journald `SystemMaxUse`) auto-derives from live system
+state on every run, so it tracks the chosen size with no manual change. See
+`docs/runbooks/instance-resize.md` for moving between sizes.
+
+Caveats at the small / burstable end:
+
+- **Minimum RAM:** stage 00 emits a non-fatal WARN below 4 GiB. The host boots and
+  runs at 2 GiB (`t4g.small`, `c8g.large`, `m8g.medium`…), but baseline services
+  (Docker daemon, CloudWatch agent, Node, zsh) consume a meaningful fraction before
+  any workload. Size data EBS and workloads accordingly.
+- **Burstable t4g (Graviton2):** zram uses zstd compression. Under sustained memory
+  pressure, compression burns CPU → drains **CPU credits** → throttling. Watch the
+  instance's `CPUCreditBalance` on swap-heavy workloads. Sustained families (m8g/
+  r8g/c8g/m7g) have no credit model and avoid this entirely.
+- **Single-vCPU sizes** (`m8g.medium`): zstd + Docker share one core. Acceptable for
+  light workloads; prefer ≥2 vCPU for concurrent container builds.
+- **Static ceilings** (`fs.file-max`, inotify, TCP buffers, Docker ulimits) are sized
+  for up to ~32 GiB RAM (`r8g.xlarge`). Above that, revisit them — see
+  `bootstrap/config/sysctl/50-bootstrap.conf` comments.
+
+Sizes/families other than `m7g.large` and `r8g.large` are permitted but **not yet
+hardware-validated** — first run on a new size should be watched.
+
+---
+
 ## Pre-Launch Checklist
 
-- [ ] Instance type is ARM64 Nitro Graviton (m7g/r8g/c8g/m8g family)
+- [ ] Instance type is ARM64 Nitro Graviton — sustained m8g/r8g/c8g/m7g or burstable t4g (see Instance Sizing Notes)
 - [ ] Root EBS: 30 GB+ gp3
 - [ ] Data EBS: sized for workload, gp3, **unformatted**, attached as second device
 - [ ] Security Group: SSH port 22 from bastion/operator IP only — no 0.0.0.0/0

@@ -1,10 +1,13 @@
 # Instance Resize
 
-Scenario: scale an existing arm64-bootstrap host between Graviton instance types
-(e.g., `m7g.large` ↔ `r8g.large` ↔ `c8g.large`). Tuning that depends on
-RAM or root filesystem size must be re-derived after resize.
+Scenario: scale an existing arm64-bootstrap host between Graviton instance types —
+across families (`m8g`/`r8g`/`c8g`/`m7g`/`t4g`) and sizes (`medium` ↔ `large` ↔
+`xlarge`), e.g. `t4g.medium` → `r8g.xlarge` or `m8g.large` → `c8g.large`. Tuning
+that depends on RAM or root filesystem size must be re-derived after resize.
 
 This runbook does not cover changing CPU architecture, AMI, or Ubuntu version.
+Moving to/from burstable `t4g` is supported; see the credit-cost caveat in
+`docs/operations/deployment-checklist.md` (Instance Sizing Notes).
 
 ## What re-derives automatically
 

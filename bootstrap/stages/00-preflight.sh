@@ -23,6 +23,8 @@ detect_architecture
 
 detect_os
 
+warn_if_low_memory
+
 # shellcheck disable=SC2154
 mkdir -p "${BOOTSTRAP_LOG_DIR}"
 
