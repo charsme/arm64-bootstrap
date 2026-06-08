@@ -14,6 +14,7 @@ bash /home/ubuntu/arm64-bootstrap/bootstrap/verify/verify-storage.sh
 bash /home/ubuntu/arm64-bootstrap/bootstrap/verify/verify-docker.sh
 bash /home/ubuntu/arm64-bootstrap/bootstrap/verify/verify-network.sh
 bash /home/ubuntu/arm64-bootstrap/bootstrap/verify/verify-security.sh
+bash /home/ubuntu/arm64-bootstrap/bootstrap/verify/verify-cloudwatch.sh
 
 echo "[INFO] cleaning transient runtime state"
 docker system prune -f || true

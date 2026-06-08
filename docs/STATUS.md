@@ -3,7 +3,7 @@
 > Single source of truth for "what's open / left on this project." Answer from this
 > file directly; do not re-derive from scattered trackers. Keep current on any status change.
 >
-> Last updated: 2026-06-05 (CloudWatch agent stage 18 added — memory metrics for Compute Optimizer, boot-time IAM gate).
+> Last updated: 2026-06-08 (bake-ami.sh now runs verify-cloudwatch; AWS CLI key file deduped to single block; key still not rotated by AWS as of today).
 
 ## Status
 
@@ -27,10 +27,12 @@ idempotent; verify suite in place. Not yet exercised on a real first EC2 launch 
 
 ### Tier 1 — Dated / imminent
 - **AWS CLI signing key expires 2026-07-07.** Committed key
-  `config/awscli/aws-cli-public-key.asc` (fp `…4672 475C`). When AWS rotates, refresh
-  the `.asc` from official docs or stage 17 verification fails on new bundles. Current
-  block already ships the rotation-overlap key, so this is a refresh-and-revalidate task,
-  not an outage.
+  `bootstrap/config/awscli/aws-cli-public-key.asc` (fp `…4672 475C`, single block).
+  As of 2026-06-08 AWS docs still publish this exact key+expiry — no extended-expiry key
+  released yet. When AWS rotates (usually weeks before expiry), re-pull the `.asc` from
+  official docs and swap, else stage 17 verification fails on new bundles. Bake before
+  2026-07-07 is clean with the current key; refresh is a recheck-and-revalidate task,
+  not a launch blocker.
 
 ### Tier 2 — Open decisions / hygiene
 - None open.
